@@ -5,6 +5,8 @@ const { authenticate, requireRole } = require('./middleware/auth');
 const app = express();
 app.use(express.json());
 app.use('/auth', require('./routes/auth'));
+app.use('/products', require('./routes/products'));
+app.use('/admin', require('./routes/admin'));
 
 app.get('/health', async (req, res) => {
   try {
