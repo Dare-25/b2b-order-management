@@ -7,8 +7,9 @@
 - **Decision the system supports:** Which products to restock and which customer orders to fulfil first.
 
 ## 2. Scope
-**In scope:** Products, carts, orders, invoices, stock status, admin controls.
-**Out of scope:**Real payment processing, shipping integrations, and support for multiple warehouses.
+
+- **In scope:** Products, carts, orders, invoices, stock status, admin controls.
+- **Out of scope:** Real payment processing, shipping integrations, and support for multiple warehouses.
 
 ## 3. User roles
 | Role | Can do |
