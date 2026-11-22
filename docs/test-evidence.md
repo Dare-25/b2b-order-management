@@ -13,7 +13,7 @@ Tests were run on 2026-11-21 and 2026-11-22 against the local API (Express on ht
 | Register with an email that already exists | 409 "Email already registered" | Pass |
 | Register with a password shorter than 8 characters | 400 validation error | Pass |
 | Log in with a wrong password | 401 "Invalid email or password" | Pass |
-| Staff sets a product's stock (OIL-1L to 120) | Updated product returned, STOCK_UPDATED logged with the staff user as actor | Pass |
+
 
 ## 2. Products and role checks
 | Check | Expected | Result |
@@ -30,6 +30,7 @@ Tests were run on 2026-11-21 and 2026-11-22 against the local API (Express on ht
 | Admin deletes a product (TEMP-1) | Product deactivated, not removed | Pass |
 | Customer lists products after the delete | Deactivated product is not shown | Pass |
 | Admin lists products after the delete | Deactivated product is still shown with is_active False | Pass |
+| Staff sets a product's stock (OIL-1L to 120) | Updated product returned, STOCK_UPDATED logged with the staff user as actor | Pass |
 
 ## 3. Audit log
 | Check | Expected | Result |
@@ -63,6 +64,9 @@ The actor in each entry comes from the login token, not from anything the user s
 | Stock after cancellation | RICE-5KG returns to 40 | Pass |
 | Cancel the same order again | 409 "Cannot change status from CANCELLED to CANCELLED" | Pass |
 | After the rejected 500-unit checkout, check stock and order count | Stock unchanged (RICE-5KG 40, OIL-1L 0) and order count unchanged (4) | Pass |
+| Customer 1 lists orders | Only their own orders (4 orders, all user 2) | Pass |
+| Customer 2, who has no orders, lists orders | Empty list (0 orders) | Pass |
+| Staff lists orders | All orders (4) | Pass |
 
 ## 6. Order status flow (staff)
 | Check | Expected | Result |
@@ -76,3 +80,9 @@ The actor in each entry comes from the login token, not from anything the user s
 | Check | Expected | Result |
 |---|---|---|
 | Two near-simultaneous checkouts for the last unit (`scripts/concurrency-test.ps1`, 3 runs) | Exactly one order, stock ends at 0 | The database shows exactly one order per run (orders 2, 3 and 4) and stock ended at 0 each time: pass. The console output for run 1 showed two rejections although the audit log records order 2; the cause was not identified. Customer 1 won every run, so the requests may not overlap fully. |
+
+## Still to test
+- [ ] Staff moves an order from SHIPPED to DELIVERED
+- [ ] Invalid inputs on orders: bad status value (400), non-numeric order id (400), unknown order id (404)
+- [ ] Product search (`?q=`) and pagination (`?page=&limit=`)
+- [ ] A stronger concurrency test with many parallel requests (optional)
