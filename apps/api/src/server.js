@@ -7,6 +7,8 @@ app.use(express.json());
 app.use('/auth', require('./routes/auth'));
 app.use('/products', require('./routes/products'));
 app.use('/admin', require('./routes/admin'));
+app.use('/cart', require('./routes/cart'));
+app.use('/orders', require('./routes/orders'));
 
 app.get('/health', async (req, res) => {
   try {
