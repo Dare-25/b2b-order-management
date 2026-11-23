@@ -31,6 +31,8 @@ Tests were run on 2026-11-21 and 2026-11-22 against the local API (Express on ht
 | Customer lists products after the delete | Deactivated product is not shown | Pass |
 | Admin lists products after the delete | Deactivated product is still shown with is_active False | Pass |
 | Staff sets a product's stock (OIL-1L to 120) | Updated product returned, STOCK_UPDATED logged with the staff user as actor | Pass |
+| Customer searches products with `?q=rice` | Only RICE-5KG returned | Pass |
+| Customer lists products with `limit=1` (pages 1 and 2) | One product per page, different on each page (ids 1 and 3) | Pass |
 
 ## 3. Audit log
 | Check | Expected | Result |
@@ -75,6 +77,12 @@ The actor in each entry comes from the login token, not from anything the user s
 | Staff changes PENDING to SHIPPED (skipping a step) | 409 "Cannot change status from PENDING to SHIPPED" | Pass |
 | Staff changes PENDING to CONFIRMED, then to SHIPPED | Each step succeeds | Pass |
 | Customer cancels a SHIPPED order | 409 "Cannot change status from SHIPPED to CANCELLED" | Pass |
+| Staff changes SHIPPED to DELIVERED | Status DELIVERED | Pass |
+| Staff tries to change a DELIVERED order to CANCELLED | 409 "Cannot change status from DELIVERED to CANCELLED" | Pass |
+| Staff repeats DELIVERED on a DELIVERED order | 409 "Cannot change status from DELIVERED to DELIVERED" | Pass |
+| Staff sends an invalid status value (FLYING) | 400 "Invalid status" | Pass |
+| Staff sends a non-numeric order id (abc) | 400 "Invalid order id" | Pass |
+| Staff sends an unknown order id (9999) | 404 "Order not found" | Pass |
 
 ## 7. Concurrency (criterion 3)
 | Check | Expected | Result |
@@ -82,7 +90,5 @@ The actor in each entry comes from the login token, not from anything the user s
 | Two near-simultaneous checkouts for the last unit (`scripts/concurrency-test.ps1`, 3 runs) | Exactly one order, stock ends at 0 | The database shows exactly one order per run (orders 2, 3 and 4) and stock ended at 0 each time: pass. The console output for run 1 showed two rejections although the audit log records order 2; the cause was not identified. Customer 1 won every run, so the requests may not overlap fully. |
 
 ## Still to test
-- [ ] Staff moves an order from SHIPPED to DELIVERED
-- [ ] Invalid inputs on orders: bad status value (400), non-numeric order id (400), unknown order id (404)
 - [ ] Product search (`?q=`) and pagination (`?page=&limit=`)
 - [ ] A stronger concurrency test with many parallel requests (optional)
