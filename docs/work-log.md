@@ -20,4 +20,4 @@
 
 ## 2026-11-23
 - Wrote the README with setup steps, API overview, design decisions and limitations.
-- Drafted LinkedIn post 1 (not posted yet).
+- Posted LinkedIn post 1 (https://lnkd.in/p/efwjTYQe).
