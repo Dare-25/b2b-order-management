@@ -90,5 +90,4 @@ The actor in each entry comes from the login token, not from anything the user s
 | Two near-simultaneous checkouts for the last unit (`scripts/concurrency-test.ps1`, 3 runs) | Exactly one order, stock ends at 0 | The database shows exactly one order per run (orders 2, 3 and 4) and stock ended at 0 each time: pass. The console output for run 1 showed two rejections although the audit log records order 2; the cause was not identified. Customer 1 won every run, so the requests may not overlap fully. |
 
 ## Still to test
-- [ ] Product search (`?q=`) and pagination (`?page=&limit=`)
 - [ ] A stronger concurrency test with many parallel requests (optional)
