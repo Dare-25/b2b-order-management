@@ -85,6 +85,23 @@ Send the token as `Authorization: Bearer <token>`. `GET /me` and `GET /admin-onl
 - **Roles are enforced on the server** (401 for no or bad token, 403 for the wrong role), and the user id always comes from the token, never from the request body.
 - **Express instead of NestJS** was chosen for the one-month timeline; see `docs/decision-log.md`.
 
+## Running the tests
+
+The automated tests use Jest and Supertest and run against a separate database, `b2b_test`, so they never touch the development data. Create it once:
+
+```powershell
+docker exec -it b2b-db psql -U b2b_user -d b2b_orders -c "CREATE DATABASE b2b_test;"
+Get-Content db\migrations\001_init.sql | docker exec -i b2b-db psql -U b2b_user -d b2b_test
+```
+
+Then, from `apps\api`:
+
+```powershell
+npm test
+```
+
+The 39 tests cover authentication and roles, products, the cart, checkout, order visibility, the status flow and cancellation, the audit log, and concurrency (two customers racing for the last unit in five rounds, and eight buyers racing for three units). The suite refuses to run if it is not connected to `b2b_test`.
+
 ## Documentation and evidence
 
 - `docs/requirements.md`: stakeholder, scope, roles and acceptance criteria
@@ -98,9 +115,9 @@ Send the token as `Authorization: Bearer <token>`. `GET /me` and `GET /admin-onl
 ## Limitations and next steps
 
 - **No frontend.** Everything was tested through the API with PowerShell.
-- **No automated test suite.** Checks were run manually and recorded in `docs/test-evidence.md`. Next step: Jest and Supertest tests.
+- **The automated tests cover the API only.** There are no frontend tests, because there is no frontend. `npm audit` reports moderate issues in the test tools' dependencies, which were not addressed.
 - **Migrations are one plain SQL file** applied by hand, with no migration history table.
-- **The concurrency test is only near-simultaneous.** The first customer won every run, and one run's console output disagreed with the database, so it does not prove behaviour under heavy contention. Next step: a test firing many parallel requests.
+- **The automated tests cover the API only.** There are no frontend tests, because there is no frontend. `npm audit` reports moderate issues in the test tools' dependencies, which were not addressed.
 - **Product and stock audit entries are written outside a transaction,** so a crash between the change and its log entry could leave a change unlogged. Order actions are logged inside their transaction.
 - **Tokens last 8 hours** with no refresh or revocation, and there is no rate limiting.
 - **Staff and admin accounts are created in the database,** not through an admin screen.

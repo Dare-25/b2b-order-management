@@ -21,3 +21,6 @@
 ## 2026-11-23
 - Wrote the README with setup steps, API overview, design decisions and limitations.
 - Posted LinkedIn post 1 (https://lnkd.in/p/efwjTYQe).
+
+## 2026-11-25
+- Added automated tests with Jest and Supertest to Project 1: split the app from the server (app.js and server.js), added a separate b2b_test database, and wrote 39 tests covering the checks previously done by hand, plus parallel concurrency tests (two customers for the last unit in 5 rounds, and eight buyers for three units). All pass, twice in a row.

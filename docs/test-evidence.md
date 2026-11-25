@@ -89,5 +89,11 @@ The actor in each entry comes from the login token, not from anything the user s
 |---|---|---|
 | Two near-simultaneous checkouts for the last unit (`scripts/concurrency-test.ps1`, 3 runs) | Exactly one order, stock ends at 0 | The database shows exactly one order per run (orders 2, 3 and 4) and stock ended at 0 each time: pass. The console output for run 1 showed two rejections although the audit log records order 2; the cause was not identified. Customer 1 won every run, so the requests may not overlap fully. |
 
-## Still to test
-- [ ] A stronger concurrency test with many parallel requests (optional)
+## 8. Automated tests
+Jest and Supertest tests were added in `apps/api/tests/orders.test.js` and run against a separate test database (`b2b_test`).
+
+| Check | Expected | Result |
+|---|---|---|
+| `npm test` (authentication, products, cart, checkout, visibility, status flow, cancellation, concurrency, audit log) | All tests pass | 39 passed on 2026-11-25, and again on a second run |
+| Two customers racing for the last unit, 5 rounds | Exactly one succeeds each round, stock ends at 0 | Pass |
+| Eight buyers racing for three units | Exactly 3 succeed and 5 are refused, stock ends at 0, units sold = 3 | Pass |
